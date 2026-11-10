@@ -1,0 +1,111 @@
+# Agile Health Informatics Ltd. Unofficial prototype vocabulary. Version 0.2.
+# NOT an EHDS Data Quality and Utility Label ontology or an adopted standard.
+# This URI is deployment-relative: keep the deployed file URL stable.
+@prefix lr: <#> .
+@prefix dqv: <http://www.w3.org/ns/dqv#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+lr:ReadinessRecord a rdfs:Class ; rdfs:subClassOf prov:Entity ; rdfs:label "Unofficial, draft dataset-release evidence assessment"@en .
+lr:CriterionAssessment a rdfs:Class .
+lr:UpstreamDependency a rdfs:Class .
+lr:assesses a rdf:Property .
+lr:criteriaSet a rdf:Property .
+lr:datasetIdentifier a rdf:Property .
+lr:hasAssessment a rdf:Property .
+lr:criterion a rdf:Property .
+lr:readinessState a rdf:Property .
+lr:assessmentStatus a rdf:Property .
+lr:validationIssueCount a rdf:Property .
+lr:notApplicableReason a rdf:Property .
+lr:applicabilityReviewer a rdf:Property .
+lr:applicabilityReviewDate a rdf:Property .
+lr:processMeasurement a rdf:Property .
+lr:evidenceMeasurement a rdf:Property .
+lr:procedure a rdf:Property .
+lr:evidenceItem a rdf:Property .
+lr:evidenceMethodLocation a rdf:Property .
+lr:evidenceInputsLocation a rdf:Property .
+lr:scope a rdf:Property .
+lr:interpretationNote a rdf:Property .
+lr:upstreamDependency a rdf:Property .
+lr:upstreamParty a rdf:Property .
+lr:prefilledFrom a rdf:Property .
+lr:replaces a rdf:Property .
+lr:EvidenceAvailable a skos:Concept ; skos:prefLabel "Evidence available"@en .
+lr:EvidenceGap a skos:Concept ; skos:prefLabel "Evidence gap"@en .
+lr:NotReady a skos:Concept ; skos:prefLabel "Not ready"@en .
+lr:NotApplicable a skos:Concept ; skos:prefLabel "Not applicable"@en .
+lr:Incomplete a skos:Concept ; skos:prefLabel "Incomplete"@en .
+lr:EG-A a dqv:Category ; skos:prefLabel "Data documentation"@en .
+lr:LR-01 a dqv:Dimension ; dqv:inCategory lr:EG-A ; skos:prefLabel "Metadata scope"@en .
+lr:LR-01-process a dqv:Metric ; dqv:inDimension lr:LR-01 ; dqv:expectedDataType xsd:integer .
+lr:LR-01-evidence a dqv:Metric ; dqv:inDimension lr:LR-01 ; dqv:expectedDataType xsd:integer .
+lr:LR-02 a dqv:Dimension ; dqv:inCategory lr:EG-A ; skos:prefLabel "Data provenance"@en .
+lr:LR-02-process a dqv:Metric ; dqv:inDimension lr:LR-02 ; dqv:expectedDataType xsd:integer .
+lr:LR-02-evidence a dqv:Metric ; dqv:inDimension lr:LR-02 ; dqv:expectedDataType xsd:integer .
+lr:LR-03 a dqv:Dimension ; dqv:inCategory lr:EG-A ; skos:prefLabel "Compliance with standards"@en .
+lr:LR-03-process a dqv:Metric ; dqv:inDimension lr:LR-03 ; dqv:expectedDataType xsd:integer .
+lr:LR-03-evidence a dqv:Metric ; dqv:inDimension lr:LR-03 ; dqv:expectedDataType xsd:integer .
+lr:EG-B a dqv:Category ; skos:prefLabel "Technical quality"@en .
+lr:LR-04 a dqv:Dimension ; dqv:inCategory lr:EG-B ; skos:prefLabel "Completeness"@en .
+lr:LR-04-process a dqv:Metric ; dqv:inDimension lr:LR-04 ; dqv:expectedDataType xsd:integer .
+lr:LR-04-evidence a dqv:Metric ; dqv:inDimension lr:LR-04 ; dqv:expectedDataType xsd:integer .
+lr:LR-05 a dqv:Dimension ; dqv:inCategory lr:EG-B ; skos:prefLabel "Uniqueness"@en .
+lr:LR-05-process a dqv:Metric ; dqv:inDimension lr:LR-05 ; dqv:expectedDataType xsd:integer .
+lr:LR-05-evidence a dqv:Metric ; dqv:inDimension lr:LR-05 ; dqv:expectedDataType xsd:integer .
+lr:LR-06 a dqv:Dimension ; dqv:inCategory lr:EG-B ; skos:prefLabel "Accuracy"@en .
+lr:LR-06-process a dqv:Metric ; dqv:inDimension lr:LR-06 ; dqv:expectedDataType xsd:integer .
+lr:LR-06-evidence a dqv:Metric ; dqv:inDimension lr:LR-06 ; dqv:expectedDataType xsd:integer .
+lr:LR-07 a dqv:Dimension ; dqv:inCategory lr:EG-B ; skos:prefLabel "Validity"@en .
+lr:LR-07-process a dqv:Metric ; dqv:inDimension lr:LR-07 ; dqv:expectedDataType xsd:integer .
+lr:LR-07-evidence a dqv:Metric ; dqv:inDimension lr:LR-07 ; dqv:expectedDataType xsd:integer .
+lr:LR-08 a dqv:Dimension ; dqv:inCategory lr:EG-B ; skos:prefLabel "Timeliness"@en .
+lr:LR-08-process a dqv:Metric ; dqv:inDimension lr:LR-08 ; dqv:expectedDataType xsd:integer .
+lr:LR-08-evidence a dqv:Metric ; dqv:inDimension lr:LR-08 ; dqv:expectedDataType xsd:integer .
+lr:LR-09 a dqv:Dimension ; dqv:inCategory lr:EG-B ; skos:prefLabel "Consistency"@en .
+lr:LR-09-process a dqv:Metric ; dqv:inDimension lr:LR-09 ; dqv:expectedDataType xsd:integer .
+lr:LR-09-evidence a dqv:Metric ; dqv:inDimension lr:LR-09 ; dqv:expectedDataType xsd:integer .
+lr:LR-10 a dqv:Dimension ; dqv:inCategory lr:EG-B ; skos:prefLabel "Coherence"@en .
+lr:LR-10-process a dqv:Metric ; dqv:inDimension lr:LR-10 ; dqv:expectedDataType xsd:integer .
+lr:LR-10-evidence a dqv:Metric ; dqv:inDimension lr:LR-10 ; dqv:expectedDataType xsd:integer .
+lr:LR-11 a dqv:Dimension ; dqv:inCategory lr:EG-B ; skos:prefLabel "Precision"@en .
+lr:LR-11-process a dqv:Metric ; dqv:inDimension lr:LR-11 ; dqv:expectedDataType xsd:integer .
+lr:LR-11-evidence a dqv:Metric ; dqv:inDimension lr:LR-11 ; dqv:expectedDataType xsd:integer .
+lr:EG-C a dqv:Category ; skos:prefLabel "Data quality management processes"@en .
+lr:LR-12 a dqv:Dimension ; dqv:inCategory lr:EG-C ; skos:prefLabel "Data quality framework and governance"@en .
+lr:LR-12-process a dqv:Metric ; dqv:inDimension lr:LR-12 ; dqv:expectedDataType xsd:integer .
+lr:LR-12-evidence a dqv:Metric ; dqv:inDimension lr:LR-12 ; dqv:expectedDataType xsd:integer .
+lr:LR-13 a dqv:Dimension ; dqv:inCategory lr:EG-C ; skos:prefLabel "Review and audit"@en .
+lr:LR-13-process a dqv:Metric ; dqv:inDimension lr:LR-13 ; dqv:expectedDataType xsd:integer .
+lr:LR-13-evidence a dqv:Metric ; dqv:inDimension lr:LR-13 ; dqv:expectedDataType xsd:integer .
+lr:LR-14 a dqv:Dimension ; dqv:inCategory lr:EG-C ; skos:prefLabel "Examination of bias"@en .
+lr:LR-14-process a dqv:Metric ; dqv:inDimension lr:LR-14 ; dqv:expectedDataType xsd:integer .
+lr:LR-14-evidence a dqv:Metric ; dqv:inDimension lr:LR-14 ; dqv:expectedDataType xsd:integer .
+lr:EG-D a dqv:Category ; skos:prefLabel "Coverage"@en .
+lr:LR-15 a dqv:Dimension ; dqv:inCategory lr:EG-D ; skos:prefLabel "Period covered"@en .
+lr:LR-15-process a dqv:Metric ; dqv:inDimension lr:LR-15 ; dqv:expectedDataType xsd:integer .
+lr:LR-15-evidence a dqv:Metric ; dqv:inDimension lr:LR-15 ; dqv:expectedDataType xsd:integer .
+lr:LR-16 a dqv:Dimension ; dqv:inCategory lr:EG-D ; skos:prefLabel "Population coverage"@en .
+lr:LR-16-process a dqv:Metric ; dqv:inDimension lr:LR-16 ; dqv:expectedDataType xsd:integer .
+lr:LR-16-evidence a dqv:Metric ; dqv:inDimension lr:LR-16 ; dqv:expectedDataType xsd:integer .
+lr:LR-17 a dqv:Dimension ; dqv:inCategory lr:EG-D ; skos:prefLabel "Population representativity"@en .
+lr:LR-17-process a dqv:Metric ; dqv:inDimension lr:LR-17 ; dqv:expectedDataType xsd:integer .
+lr:LR-17-evidence a dqv:Metric ; dqv:inDimension lr:LR-17 ; dqv:expectedDataType xsd:integer .
+lr:LR-18 a dqv:Dimension ; dqv:inCategory lr:EG-D ; skos:prefLabel "Average time a person appears"@en .
+lr:LR-18-process a dqv:Metric ; dqv:inDimension lr:LR-18 ; dqv:expectedDataType xsd:integer .
+lr:LR-18-evidence a dqv:Metric ; dqv:inDimension lr:LR-18 ; dqv:expectedDataType xsd:integer .
+lr:EG-E a dqv:Category ; skos:prefLabel "Access and provision"@en .
+lr:LR-19 a dqv:Dimension ; dqv:inCategory lr:EG-E ; skos:prefLabel "Collection-to-addition lag"@en .
+lr:LR-19-process a dqv:Metric ; dqv:inDimension lr:LR-19 ; dqv:expectedDataType xsd:integer .
+lr:LR-19-evidence a dqv:Metric ; dqv:inDimension lr:LR-19 ; dqv:expectedDataType xsd:integer .
+lr:LR-20 a dqv:Dimension ; dqv:inCategory lr:EG-E ; skos:prefLabel "Accessibility and time to provide"@en .
+lr:LR-20-process a dqv:Metric ; dqv:inDimension lr:LR-20 ; dqv:expectedDataType xsd:integer .
+lr:LR-20-evidence a dqv:Metric ; dqv:inDimension lr:LR-20 ; dqv:expectedDataType xsd:integer .
+lr:EG-F a dqv:Category ; skos:prefLabel "Data modifications"@en .
+lr:LR-21 a dqv:Dimension ; dqv:inCategory lr:EG-F ; skos:prefLabel "Merging, adding and linkage"@en .
+lr:LR-21-process a dqv:Metric ; dqv:inDimension lr:LR-21 ; dqv:expectedDataType xsd:integer .
+lr:LR-21-evidence a dqv:Metric ; dqv:inDimension lr:LR-21 ; dqv:expectedDataType xsd:integer .

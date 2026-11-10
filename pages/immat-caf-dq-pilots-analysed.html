@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en-IE">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IMMAT and CAF-DQ Pilots Analysed</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Annotated briefing: explanation in the main column; critique in amber-ruled "points to consider" that can be hidden. */
+  --bg: #f4f6f5;
+  --surface: #ffffff;
+  --ink: #16232a;
+  --muted: #52616a;
+  --line: #d6dddb;
+  --accent: #0e6a5e;
+  --accent-soft: #e2f0ed;
+  --note: #8f5a00;
+  --note-soft: #fbf3e2;
+  --ok: #1d7646; --ok-soft: #e3f3ea;
+  --bad: #a2382a; --bad-soft: #fbe6e2;
+  --display: "Newsreader", Georgia, "Times New Roman", serif;
+  --body: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f171a; --surface: #162126; --ink: #e3ebe8; --muted: #9db0b3; --line: #2a3b41;
+    --accent: #5cc4ae; --accent-soft: #173a35; --note: #e6ae52; --note-soft: #33280f;
+    --ok: #6bcf96; --ok-soft: #173426; --bad: #ef8a78; --bad-soft: #3d1f1a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f171a; --surface: #162126; --ink: #e3ebe8; --muted: #9db0b3; --line: #2a3b41;
+  --accent: #5cc4ae; --accent-soft: #173a35; --note: #e6ae52; --note-soft: #33280f;
+  --ok: #6bcf96; --ok-soft: #173426; --bad: #ef8a78; --bad-soft: #3d1f1a;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.6; }
+a { color: var(--accent); }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, [tabindex]:focus-visible, g.node:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+.read { max-width: 70ch; }
+header.top { background: var(--surface); border-bottom: 1px solid var(--line); }
+header.top .wrap { padding-top: 36px; padding-bottom: 26px; }
+.kicker { font-size: 0.82rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); margin: 0 0 8px; }
+h1, h2, h3 { font-family: var(--display); font-weight: 600; line-height: 1.2; text-wrap: balance; }
+h1 { font-size: clamp(2rem, 4vw, 2.6rem); margin: 0 0 12px; }
+h2 { font-size: 1.7rem; margin: 0 0 10px; }
+h3 { font-size: 1.2rem; margin: 0 0 6px; }
+.lede { font-size: 1.1rem; color: var(--muted); margin: 0; }
+.notice { margin-top: 16px; font-size: 0.88rem; color: var(--muted); border-left: 3px solid var(--line); padding-left: 12px; }
+.controls { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; margin-top: 20px; }
+.toggle { display: inline-flex; align-items: center; gap: 10px; font-weight: 600; cursor: pointer; }
+.toggle input { width: 18px; height: 18px; accent-color: var(--note); }
+nav.toc { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 0.92rem; }
+nav.toc a { text-decoration: none; border-bottom: 1px solid currentColor; }
+section.block { padding: 42px 0; border-bottom: 1px solid var(--line); }
+section.block > .wrap > p { max-width: 70ch; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 18px 20px; }
+.muted { color: var(--muted); }
+.small { font-size: 0.88rem; }
+.cite { font-size: 0.8rem; color: var(--muted); }
+.consider { background: var(--note-soft); border-left: 4px solid var(--note); border-radius: 0 6px 6px 0; padding: 12px 16px; margin: 16px 0 0; max-width: 78ch; }
+.consider > b:first-child { color: var(--note); display: block; font-size: 0.8rem; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 2px; }
+.consider p { margin: 4px 0; }
+.consider ul { margin: 4px 0; padding-left: 1.1em; }
+body.hide-consider .consider { display: none; }
+
+/* Diagram */
+.diagram-grid { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(260px, 1fr); gap: 18px; margin-top: 18px; align-items: start; }
+@media (max-width: 860px) { .diagram-grid { grid-template-columns: 1fr; } }
+.svgbox { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 8px; overflow-x: auto; }
+svg { display: block; width: 100%; min-width: 600px; height: auto; }
+svg .edge { stroke: var(--muted); stroke-width: 1.6; fill: none; }
+svg .edge.dash { stroke-dasharray: 5 4; }
+svg .elabel { font: 500 11.5px var(--body); fill: var(--muted); }
+svg .elabel-bg { fill: var(--surface); }
+svg g.node { cursor: pointer; }
+svg g.node rect { fill: var(--surface); stroke: var(--line); stroke-width: 1.5; rx: 6; }
+svg g.node.kind-hiqa rect { stroke: var(--accent); }
+svg g.node.kind-eu rect { stroke: var(--ink); stroke-dasharray: 3 2; }
+svg g.node:hover rect, svg g.node.sel rect { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 2.5; }
+svg .ntitle { font: 700 14px var(--body); fill: var(--ink); }
+svg .nsub { font: 400 11.5px var(--body); fill: var(--muted); }
+svg marker path { fill: var(--muted); }
+#node-detail h3 { margin-top: 0; }
+#node-detail dl { margin: 8px 0 0; display: grid; grid-template-columns: 96px 1fr; gap: 4px 10px; font-size: 0.93rem; }
+#node-detail dt { color: var(--muted); font-weight: 600; }
+#node-detail dd { margin: 0; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 0.82rem; color: var(--muted); margin-top: 8px; }
+.legend span::before { content: ""; display: inline-block; width: 18px; height: 10px; margin-right: 6px; vertical-align: middle; border: 1.5px solid var(--line); border-radius: 2px; }
+.legend .l-hiqa::before { border-color: var(--accent); }
+.legend .l-eu::before { border-color: var(--ink); border-style: dashed; }
+.legend .l-dash::before { border: 0; border-top: 2px dashed var(--muted); height: 0; }
+
+/* Tables */
+.tablebox { overflow-x: auto; margin-top: 16px; }
+table { border-collapse: collapse; width: 100%; background: var(--surface); font-size: 0.93rem; }
+th, td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
+thead th { background: var(--bg); font-weight: 700; }
+tbody th { font-weight: 600; color: var(--muted); width: 18%; }
+td.num { font-variant-numeric: tabular-nums; text-align: right; }
+
+/* Masking demo */
+.demo { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 18px; margin-top: 18px; }
+@media (max-width: 860px) { .demo { grid-template-columns: 1fr; } }
+.std-row { display: grid; grid-template-columns: 44px minmax(0, 1fr) 150px; gap: 10px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--line); }
+.std-row:last-child { border-bottom: 0; }
+.std-id { font-weight: 700; font-variant-numeric: tabular-nums; }
+.std-name { font-size: 0.88rem; color: var(--muted); line-height: 1.3; }
+.lv { display: flex; gap: 3px; }
+.lv button { flex: 1; font: 600 0.85rem var(--body); border: 1px solid var(--line); background: var(--surface); color: var(--muted); padding: 5px 0; border-radius: 3px; cursor: pointer; font-variant-numeric: tabular-nums; }
+.lv button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+.lv button.low[aria-pressed="true"] { background: var(--bad); border-color: var(--bad); }
+.results { display: grid; gap: 12px; align-content: start; }
+.result { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; }
+.result .h { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+.result .v { font-family: var(--display); font-size: 1.7rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.result .v small { font-family: var(--body); font-size: 0.9rem; color: var(--muted); font-weight: 500; }
+.result.hiqa { border-top: 4px solid var(--accent); }
+.result.alt { border-top: 4px solid var(--note); }
+.bars { display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px; align-items: end; height: 110px; margin-top: 10px; border-bottom: 1px solid var(--line); position: relative; }
+.bar { background: var(--accent); border-radius: 2px 2px 0 0; position: relative; }
+.bar.low { background: var(--bad); }
+.barlabels { display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px; font-size: 0.68rem; color: var(--muted); text-align: center; font-variant-numeric: tabular-nums; margin-top: 3px; }
+.btnrow { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.btn { font: 600 0.88rem var(--body); border: 1px solid var(--accent); color: var(--accent); background: var(--surface); padding: 6px 12px; border-radius: 4px; cursor: pointer; }
+.btn:hover { background: var(--accent-soft); }
+
+/* Coverage map */
+.cov { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 16px; }
+@media (max-width: 860px) { .cov { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 520px) { .cov { grid-template-columns: 1fr; } }
+.cov .panel h3 { font-size: 1.05rem; font-family: var(--body); font-weight: 700; margin-bottom: 2px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.chip { font-size: 0.82rem; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--line); }
+.chip.both { background: var(--ok-soft); color: var(--ok); border-color: transparent; }
+.chip.art { background: var(--bad-soft); color: var(--bad); border-color: transparent; }
+.chip.q { background: var(--bg); color: var(--muted); border-style: dashed; }
+body.gaps-only .chip.both { opacity: 0.25; }
+.covkey { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-top: 10px; font-size: 0.85rem; }
+
+/* Process vs evidence */
+.pe-row td:first-child { font-weight: 600; white-space: nowrap; }
+.pe-row td.cat { color: var(--muted); font-size: 0.85rem; }
+.q-list { display: grid; gap: 10px; margin-top: 16px; counter-reset: q; }
+.q-item { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; display: grid; grid-template-columns: 36px 1fr; gap: 10px; }
+.q-item::before { counter-increment: q; content: counter(q); font-family: var(--display); font-size: 1.4rem; font-weight: 600; color: var(--accent); }
+.q-item p { margin: 0; }
+.q-item .who { font-size: 0.85rem; color: var(--muted); }
+footer { padding: 34px 0 50px; font-size: 0.88rem; color: var(--muted); }
+footer ol { padding-left: 1.2em; }
+</style>
+
+<style id="ehds-microsite-nav-css">
+#ehds-microsite-nav{box-sizing:border-box;display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 20px;align-items:center;padding:10px max(20px,calc((100% - 1140px)/2));background:#102d32;color:#f1f7f5;font:600 13px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;border-bottom:3px solid #1ba68a}
+#ehds-microsite-nav a{color:#fff!important;text-decoration:none!important;border-bottom:1px solid #72dbc4!important}
+#ehds-microsite-nav a:hover,#ehds-microsite-nav a:focus-visible{color:#aaf2e1!important}
+#ehds-microsite-nav span{font-weight:400;opacity:.86}
+@media print{#ehds-microsite-nav{display:none!important}}
+</style>
+</head>
+<body>
+<nav id="ehds-microsite-nav" aria-label="Microsite navigation"><a href="../index.html">&#8592; EHDS Data Quality Readiness</a><span>Independent companion resource &nbsp;&middot;&nbsp; <a href="../index.html#source-reports">Original HIQA reports</a></span></nav>
+
+
+<header class="top">
+  <div class="wrap">
+    <p class="kicker">Annotated analysis for steering group and consultation readers</p>
+    <h1>The IMMAT and CAF-DQ pilot reports, read together</h1>
+    <p class="lede read">HIQA published both pilot reports on 9 November 2026 as part of HealthData@IE Work Package 8. Read separately, each describes a tool. Read together, they describe one readiness programme, and show where its parts do not yet connect.</p>
+    <p class="notice read">Independent analysis by Agile Health Informatics Ltd. Not a HIQA publication. The explanation paraphrases the reports, with section references. The author's own assessments appear only in amber "Points to consider" panels, which you can hide.</p>
+    <div class="controls">
+      <label class="toggle" for="toggle-consider"><input type="checkbox" id="toggle-consider" checked> Show points to consider</label>
+      <nav class="toc" aria-label="On this page">
+        <a href="#fit">How the parts fit</a>
+        <a href="#compare">Side by side</a>
+        <a href="#scoring">IMMAT scoring</a>
+        <a href="#coverage">Label coverage</a>
+        <a href="#evidence">Process and evidence</a>
+        <a href="#questions">Open questions</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<section class="block" id="fit">
+  <div class="wrap">
+    <h2>How the parts fit</h2>
+    <p>Select any box to see what it is, where it comes from in the reports, and how it connects. Dashed lines are relationships the reports state as intentions rather than describe.</p>
+    <div class="diagram-grid">
+      <div>
+        <div class="svgbox"><svg id="diagram" viewBox="0 0 880 420" role="group" aria-label="Relationships between HIQA instruments and EHDS components"></svg></div>
+        <div class="legend"><span class="l-hiqa">HIQA instrument</span><span class="l-eu">EU-defined</span><span>National or other</span><span class="l-dash">Stated intention</span></div>
+      </div>
+      <div class="panel" id="node-detail" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="compare">
+  <div class="wrap">
+    <h2>The two pilots side by side</h2>
+    <p>The pilots share a work package, a steering group, a working group, a sampling frame and an analysis method. They differ in what they test and who uses the instrument.</p>
+    <p class="notice">Regulatory context: <a href="https://eur-lex.europa.eu/eli/reg_impl/2026/2098/oj">Commission Implementing Regulation (EU) 2026/2098</a> has already established minimum HealthDCAT-AP metadata requirements for dataset descriptions. It is distinct from the forthcoming implementing acts for the Article 78 Data Quality and Utility Label.</p>
+    <div class="tablebox">
+      <table>
+        <thead><tr><th scope="col"></th><th scope="col">IMMAT (Deliverable 8.2)</th><th scope="col">CAF-DQ (Deliverable 8.9)</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Purpose</th><td>Data holders self-assess information management maturity and benchmark against peers (§1.3)</td><td>HIQA reviewers gather evidence in targeted reviews of data quality (§1.4)</td></tr>
+          <tr><th scope="row">Measured against</th><td>12 National Standards for Information Management (2024)</td><td>12 QUANTUM data quality dimensions in 4 categories (Appendix D)</td></tr>
+          <tr><th scope="row">Scale</th><td>5 maturity levels adapted from the Capability Maturity Model; scores summed to 12–60 and banded (Table 2)</td><td>4 HIQA compliance levels (§1.4)</td></tr>
+          <tr><th scope="row">Unit</th><td>Organisation or dataset, deliberately left open (§4.3.1)</td><td>Dataset, following the label</td></tr>
+          <tr><th scope="row">Pilot</th><td>4 data holders; 90-minute online sessions, tool sent two weeks ahead (§3)</td><td>3 data holders (2 national collections, 1 eHealth system); 2.5–3 hours in person (§3)</td></tr>
+          <tr><th scope="row">Question asked</th><td>Is the tool usable, accessible and fit for purpose? (§2.1)</td><td>Can the dimensions be applied in practice by holders of differing maturity? (§2.1)</td></tr>
+          <tr><th scope="row">Headline</th><td>Useful; refine wording, add examples, support dataset-level use (§4.1)</td><td>None yet able to assess and report consistently across all dimensions (§4.9)</td></tr>
+          <tr><th scope="row">Next</th><td>Digital tool on the nHDC platform; roll-out 2027 (§5.2)</td><td>Revise; final version October 2027; review method to follow (§1.4)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="consider"><b>Points to consider</b>
+      <ul>
+        <li>The IMMAT pilot tested usability. The CAF-DQ pilot tested whether holders could actually do what is required. The difference in tone between the reports follows from that, not from the participants.</li>
+        <li>Both drew participants to span self-reported maturity. The CAF-DQ found maturity made no difference to readiness (§4.9). That bears directly on how much weight a self-reported IMMAT score can carry.</li>
+        <li>The IMMAT sessions were described as "think-out-loud", but participants reviewed the tool beforehand and discussed it afterwards, so the method observed opinions rather than live reasoning.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="scoring">
+  <div class="wrap">
+    <h2>How the IMMAT score is built</h2>
+    <p>Each of the 12 standards is scored from 1 to 5. The scores are added to give a total from 12 to 60, which maps to a band (IMMAT report, Table 2). The settings below start at HIQA's own worked example in Figure 3. Change any level to see how the total, the band and the profile respond.</p>
+    <div class="demo">
+      <div class="panel" id="std-list" role="group" aria-label="Level for each standard"></div>
+      <div class="results">
+        <div class="result hiqa">
+          <div class="h">HIQA method: total and band</div>
+          <div class="v" id="r-total"></div>
+          <div class="small muted" id="r-band-note"></div>
+        </div>
+        <div class="result">
+          <div class="h">Profile across the 12 standards</div>
+          <div class="bars" id="bars" aria-hidden="true"></div>
+          <div class="barlabels" id="barlabels" aria-hidden="true"></div>
+          <div class="small" id="r-profile" style="margin-top:8px"></div>
+        </div>
+        <div class="result alt consider-result">
+          <div class="h">Alternative: lowest standard limits the band</div>
+          <div class="v" id="r-floor"></div>
+          <div class="small muted">Not HIQA's method. Shown for comparison.</div>
+        </div>
+        <div class="btnrow">
+          <button class="btn" type="button" id="b-fig3">HIQA Figure 3 example</button>
+          <button class="btn" type="button" id="b-even">Even 3s</button>
+          <button class="btn" type="button" id="b-spiky">Strong but two at Level 1</button>
+        </div>
+      </div>
+    </div>
+    <p class="cite">Standard titles and Figure 3 values from the IMMAT report, Table 1 and Figure 3. Band thresholds from Table 2.</p>
+    <div class="consider"><b>Points to consider</b>
+      <ul>
+        <li>In HIQA's own example, Standards 3.1 (data standards) and 4.3 (performance assurance and risk) are at Level 1, yet the organisation is "Defined". A total lets strong standards offset weak ones.</li>
+        <li>The pilot found the same masking between datasets (§4.3.1). The proposed fix, dataset-level completion, addresses that but not the masking across standards.</li>
+        <li>The Initial band covers a single possible score, 12. One standard above Level 1 makes an organisation "Emerging".</li>
+        <li>Adding ordinal levels treats each step as equal in size and each standard as equal in weight; neither is argued in the report.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="coverage">
+  <div class="wrap">
+    <h2>What the label must cover, and what the dimensions cover</h2>
+    <p>Article 78(3) of the EHDS Regulation lists the elements a data quality and utility label covers, where applicable, in six groups. The CAF-DQ uses the 12 QUANTUM dimensions in four categories (CAF-DQ report, Figure 1 and Appendix D). This map sets one against the other.</p>
+    <div class="covkey">
+      <span class="chip both">In Art. 78(3) and a QUANTUM dimension</span>
+      <span class="chip art">In Art. 78(3), no QUANTUM dimension</span>
+      <span class="chip q">QUANTUM dimension not named in Art. 78(3)</span>
+      <label class="toggle small" for="gaps-only"><input type="checkbox" id="gaps-only"> Highlight gaps</label>
+    </div>
+    <div class="cov" id="cov"></div>
+    <p class="cite">Article 78(3)(a)–(f), Regulation (EU) 2025/327. Detailed technical specifications are due by implementing acts by 26 March 2027 (Art. 78(6)).</p>
+    <div class="consider"><b>Points to consider</b>
+      <ul>
+        <li>Two of the six Article groups, data quality management processes and data modifications, have no QUANTUM dimension, so the draft CAF-DQ does not test them.</li>
+        <li>The pilot's headline finding is that holders can evidence processes rather than outcomes (§5). The Regulation expressly includes the maturity of data quality management processes. Part of the reported mismatch comes from the taxonomy used, not only from holders' readiness.</li>
+        <li>The CAF-DQ's final version (October 2027) falls after the implementing acts are due, so it can be aligned with the adopted specification rather than QUANTUM's proposal.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="evidence">
+  <div class="wrap">
+    <h2>Process and evidence, dimension by dimension</h2>
+    <p>The CAF-DQ pilot asked, for each dimension, whether holders assess and report it today. The pattern across dimensions is consistent: practices exist, measurement and reporting mostly do not.</p>
+    <div class="tablebox">
+      <table>
+        <thead><tr><th scope="col">Dimension</th><th scope="col">Category</th><th scope="col">What holders described doing</th><th scope="col">What they could not yet show</th><th scope="col">§</th></tr></thead>
+        <tbody id="pe-body"></tbody>
+      </table>
+    </div>
+    <p class="cite">Paraphrased from the CAF-DQ report, Table 1 and sections 4.5 to 4.8.</p>
+    <div class="consider"><b>Points to consider</b>
+      <ul>
+        <li>For seven of the twelve dimensions the measurement in Appendix D asks whether something is documented. The difficulty participants report is partly that "documented" is not defined. A specification of acceptable evidence would resolve much of it.</li>
+        <li>The report attributes difficulty to Ireland's lower digital maturity (§4.2) and plans to feed that back to QUANTUM (§6). Several difficulties, such as the scope of compliance and representativity for service-use data, arise from the definitions themselves and would apply in any Member State.</li>
+        <li>Upstream dependency (§4.3, §4.7.2) affects provenance, completeness and coverage. Neither report says how a label, or a review, should treat outcomes the holder does not control.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="questions">
+  <div class="wrap">
+    <h2>Questions the reports leave open</h2>
+    <p>These are matters on which neither report reaches a position. They are stated as questions, with the body best placed to answer them.</p>
+    <div class="q-list">
+      <div class="q-item"><div><p>Will the IMMAT be completed per organisation, per dataset, or both, and if per dataset, keyed to National Health Dataset Catalogue identifiers?</p><p class="who">HIQA · IMMAT §4.3.1, §5.1</p></div></div>
+      <div class="q-item"><div><p>How will an IMMAT data quality score (Standard 3.2, one item on a 5-level scale) be compared with CAF-DQ findings across 12 dimensions on a 4-level scale?</p><p class="who">HIQA · IMMAT §1.3</p></div></div>
+      <div class="q-item"><div><p>Will IMMAT results inform the prioritisation of reviews, and if so, how will HIQA address the incentive that creates for self-reporting?</p><p class="who">HIQA · IMMAT §1.3, §4.4.2</p></div></div>
+      <div class="q-item"><div><p>Will the final CAF-DQ cover all six Article 78(3) groups, including data quality management processes and data modifications?</p><p class="who">HIQA, following the Article 78(6) implementing acts</p></div></div>
+      <div class="q-item"><div><p>What evidence will satisfy a "documented" measurement, and at what granularity: all variables or a defined minimum set?</p><p class="who">HIQA and the EU, via QUANTUM · CAF-DQ §4.8.3, §4.8.4</p></div></div>
+      <div class="q-item"><div><p>How will outcomes that depend on upstream data providers be attributed in a label and in a targeted review?</p><p class="who">Department of Health, HIQA · CAF-DQ §4.3, §4.7.2</p></div></div>
+      <div class="q-item"><div><p>How will metadata readiness, including HealthDCAT-AP adoption and alignment with a national data dictionary, be supported before 2029?</p><p class="who">HealthData@IE partners · CAF-DQ §4.7.3</p></div></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap read">
+    <p><strong>Sources</strong></p>
+    <ol>
+      <li>HIQA. Pilot Report: Information Management Maturity Assessment Tool. HealthData@IE Deliverable 8.2 (dated January 2026). Published 9 November 2026.</li>
+      <li>HIQA. Pilot Report: Compliance Assessment Framework for Data Quality. HealthData@IE Deliverable 8.9 (dated April 2026). Published 9 November 2026.</li>
+      <li><a href="https://www.hiqa.ie/hiqa-news-updates/hiqa-publishes-reports-tools-developed-support-health-data-holders-ireland">HIQA news release, 9 November 2026</a>.</li>
+      <li><a href="https://eur-lex.europa.eu/eli/reg/2025/327/oj">Regulation (EU) 2025/327 on the European Health Data Space</a>, Articles 51, 77 and 78.</li>
+      <li>Agile Health Informatics Ltd. Data Quality and Utility Label Readiness Check: Specification, version 0.1 (10 November 2026), and National Health Dataset Catalogue: Requirements and Specification, version 0.3 (24 October 2026). Unofficial consultation proposals.</li>
+    </ol>
+    <p>© 2026 Agile Health Informatics Ltd. Independent analysis; not affiliated with or endorsed by HIQA, the Department of Health or HealthData@IE.</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+  function store(key, val) { try { if (val === undefined) return JSON.parse(localStorage.getItem(key) || "null"); localStorage.setItem(key, JSON.stringify(val)); } catch (e) { return null; } }
+  function el(tag, attrs, html) { var n = document.createElement(tag); if (attrs) for (var k in attrs) n.setAttribute(k, attrs[k]); if (html != null) n.innerHTML = html; return n; }
+  var SVGNS = "http://www.w3.org/2000/svg";
+  function sv(tag, attrs) { var n = document.createElementNS(SVGNS, tag); for (var k in attrs) n.setAttribute(k, attrs[k]); return n; }
+
+  /* ---------- Points-to-consider toggle ---------- */
+  var tog = document.getElementById("toggle-consider");
+  var pref = store("wp8-consider");
+  if (pref === false) tog.checked = false;
+  function applyToggle() { document.body.classList.toggle("hide-consider", !tog.checked); store("wp8-consider", tog.checked); }
+  tog.addEventListener("change", applyToggle); applyToggle();
+
+  /* ---------- Diagram ---------- */
+  var W = 184, H = 58;
+  var NODES = {
+    ns:    { x: 120, y: 70,  t: "National Standards", s: "HIQA, 2024 · 12 standards", k: "hiqa",
+      what: "HIQA's National Standards for Information Management in Health and Social Care: four principles, twelve standards, mandated by the Minister in 2024.",
+      src: "IMMAT §1.3, Table 1", consider: "The IMMAT is built on all twelve standards; only Standard 3.2 concerns data quality directly." },
+    immat: { x: 420, y: 70,  t: "IMMAT", s: "Self-assessment · holder", k: "hiqa",
+      what: "Twelve questions, one per standard, each answered on five maturity levels. Scores summed to 12–60 and banded. Intended for benchmarking and for planning HIQA's reviews.",
+      src: "IMMAT §1.3, Table 2", consider: "A self-assessment that also feeds regulatory prioritisation creates an incentive problem the report does not discuss." },
+    nhdc:  { x: 760, y: 70,  t: "National catalogue", s: "nHDC · Art. 77", k: "nat",
+      what: "The National Health Dataset Catalogue, where holders describe datasets for discovery under Article 77. The digital IMMAT will share its platform and login.",
+      src: "IMMAT Appendix C; CAF-DQ §1.3", consider: "Sharing a login is not the same as sharing a data model. If the IMMAT is completed per dataset, results should be keyed to catalogue dataset identifiers." },
+    ra:    { x: 120, y: 210, t: "Readiness Assessment", s: "HIQA survey, 2025", k: "hiqa",
+      what: "HIQA's 2025 survey of data holders' preparedness for HDAB services. Both pilots drew their participants from it, by type and self-reported maturity.",
+      src: "IMMAT §3.1; CAF-DQ §3.1", consider: "The CAF-DQ found self-reported maturity did not predict readiness to report the dimensions (§4.9)." },
+    quantum:{ x: 590, y: 210, t: "QUANTUM dimensions", s: "EU project · 12 dimensions", k: "eu",
+      what: "An EU-funded project developing the data quality and utility label. Its twelve dimensions in four categories are the basis of the CAF-DQ.",
+      src: "CAF-DQ §1.3, Figure 1, Appendix D", consider: "QUANTUM's dimensions are a proposal; the binding content is Article 78(3) and the implementing acts due by March 2027. Two Article groups have no QUANTUM dimension." },
+    caf:   { x: 420, y: 350, t: "CAF-DQ", s: "HIQA review framework", k: "hiqa",
+      what: "HIQA's draft framework for targeted reviews of data quality, setting expected practice at four compliance levels for each dimension. Final version due October 2027.",
+      src: "CAF-DQ §1.4, §6", consider: "The report never shows the framework's criteria. The pilot tested the dimensions rather than the instrument; only §4.9 discusses its format." },
+    label: { x: 760, y: 350, t: "Quality and utility label", s: "EHDS Art. 78 · holder", k: "eu",
+      what: "Applied by data holders to datasets; mandatory for datasets collected and processed with Union or national public funding. The health data access body can revoke an inaccurate label.",
+      src: "CAF-DQ §1.3; EHDS Art. 78", consider: "Both reports describe reporting against the label as a legal requirement without the public-funding qualification in Article 78(2)." }
+  };
+  var EDGES = [
+    ["ns", "immat", "basis", false],
+    ["immat", "nhdc", "same platform and login", false],
+    ["ra", "immat", "pilot sample", false],
+    ["ra", "caf", "pilot sample", false],
+    ["quantum", "caf", "12 dimensions", false],
+    ["quantum", "label", "proposed specification", false],
+    ["caf", "label", "reviews validate label", true],
+    ["label", "nhdc", "shown with dataset", false],
+    ["immat", "caf", "prioritises reviews", true, -22],
+    ["caf", "immat", "validates Standard 3.2", true, 22]
+  ];
+  var svg = document.getElementById("diagram");
+  var defs = sv("defs", {});
+  var mk = sv("marker", { id: "arrow", viewBox: "0 0 10 10", refX: "9", refY: "5", markerWidth: "7", markerHeight: "7", orient: "auto-start-reverse" });
+  mk.appendChild(sv("path", { d: "M0,0 L10,5 L0,10 z" }));
+  defs.appendChild(mk); svg.appendChild(defs);
+  function clip(cx, cy, tx, ty) {
+    var dx = tx - cx, dy = ty - cy;
+    var sx = dx === 0 ? Infinity : (W / 2 + 4) / Math.abs(dx), sy = dy === 0 ? Infinity : (H / 2 + 4) / Math.abs(dy);
+    var s = Math.min(sx, sy);
+    return [cx + dx * s, cy + dy * s];
+  }
+  var edgeLayer = sv("g", {}), labelLayer = sv("g", {}), nodeLayer = sv("g", {});
+  svg.appendChild(edgeLayer); svg.appendChild(labelLayer); svg.appendChild(nodeLayer);
+  EDGES.forEach(function (e) {
+    var a = NODES[e[0]], b = NODES[e[1]], off = e[4] || 0;
+    var ax = a.x + off, bx = b.x + off;
+    var p1 = clip(ax, a.y, bx, b.y), p2 = clip(bx, b.y, ax, a.y);
+    edgeLayer.appendChild(sv("line", { x1: p1[0], y1: p1[1], x2: p2[0], y2: p2[1], "class": "edge" + (e[3] ? " dash" : ""), "marker-end": "url(#arrow)" }));
+    var mx = (p1[0] + p2[0]) / 2, my = (p1[1] + p2[1]) / 2;
+    var vertical = Math.abs(p1[0] - p2[0]) < 1;
+    var anchor = vertical ? (off < 0 ? "end" : "start") : "middle";
+    var lx = vertical ? mx + (off < 0 ? -6 : 6) : mx, ly = vertical ? my + 4 : my - 6;
+    var txt = sv("text", { x: lx, y: ly, "text-anchor": anchor, "class": "elabel" });
+    txt.textContent = e[2];
+    labelLayer.appendChild(txt);
+    var bb = txt.getBBox();
+    labelLayer.insertBefore(sv("rect", { x: bb.x - 3, y: bb.y - 1, width: bb.width + 6, height: bb.height + 2, "class": "elabel-bg" }), txt);
+  });
+  var detail = document.getElementById("node-detail");
+  var nodeEls = {};
+  function select(id) {
+    var n = NODES[id];
+    Object.keys(nodeEls).forEach(function (k) { nodeEls[k].classList.toggle("sel", k === id); nodeEls[k].setAttribute("aria-pressed", String(k === id)); });
+    var links = EDGES.filter(function (e) { return e[0] === id || e[1] === id; }).map(function (e) {
+      return (e[0] === id ? "→ " + NODES[e[1]].t : "← " + NODES[e[0]].t) + ": " + e[2] + (e[3] ? " (stated intention)" : "");
+    });
+    detail.innerHTML = "<h3>" + n.t + "</h3><p style=\"margin:0\">" + n.what + "</p>" +
+      "<dl><dt>Source</dt><dd>" + n.src + "</dd><dt>Links</dt><dd>" + links.join("<br>") + "</dd></dl>" +
+      '<div class="consider"><b>Point to consider</b><p>' + n.consider + "</p></div>";
+  }
+  Object.keys(NODES).forEach(function (id) {
+    var n = NODES[id];
+    var g = sv("g", { "class": "node kind-" + n.k, tabindex: "0", role: "button", "aria-pressed": "false", "aria-label": n.t + ", " + n.s });
+    g.appendChild(sv("rect", { x: n.x - W / 2, y: n.y - H / 2, width: W, height: H }));
+    var t1 = sv("text", { x: n.x, y: n.y - 4, "text-anchor": "middle", "class": "ntitle" }); t1.textContent = n.t;
+    var t2 = sv("text", { x: n.x, y: n.y + 14, "text-anchor": "middle", "class": "nsub" }); t2.textContent = n.s;
+    g.appendChild(t1); g.appendChild(t2);
+    g.addEventListener("click", function () { select(id); });
+    g.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); select(id); } });
+    nodeLayer.appendChild(g); nodeEls[id] = g;
+  });
+  select("immat");
+
+  /* ---------- Scoring demo ---------- */
+  var STD = [
+    ["1.1", "Uphold people's rights relating to information"],
+    ["1.2", "Protect privacy and confidentiality"],
+    ["2.1", "Optimise accessibility, use and value of information"],
+    ["2.2", "Undertake effective stakeholder engagement"],
+    ["3.1", "Align with data standards and agreed definitions"],
+    ["3.2", "Enhance data quality"],
+    ["3.3", "Ensure data security"],
+    ["3.4", "Develop staff capability and capacity"],
+    ["4.1", "Governance, leadership and management"],
+    ["4.2", "Implement strategy for information management"],
+    ["4.3", "Performance assurance and risk management"],
+    ["4.4", "Comply with legislation and codes of practice"]
+  ];
+  var FIG3 = [2, 4, 4, 4, 1, 2, 3, 4, 2, 3, 1, 2];
+  var EVEN = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3];
+  var SPIKY = [5, 5, 5, 5, 1, 1, 5, 5, 5, 5, 4, 5];
+  var LEVELS = ["Initial", "Emerging", "Defined", "Managed", "Optimised"];
+  function band(total) { if (total <= 12) return 0; if (total <= 24) return 1; if (total <= 36) return 2; if (total <= 48) return 3; return 4; }
+  var vals = FIG3.slice();
+  var list = document.getElementById("std-list");
+  var btnGroups = [];
+  STD.forEach(function (s, i) {
+    var row = el("div", { "class": "std-row" });
+    row.appendChild(el("span", { "class": "std-id" }, s[0]));
+    row.appendChild(el("span", { "class": "std-name" }, s[1]));
+    var lv = el("div", { "class": "lv", role: "group", "aria-label": "Level for standard " + s[0] });
+    var bs = [];
+    for (var L = 1; L <= 5; L++) {
+      (function (L) {
+        var b = el("button", { type: "button", "aria-label": "Standard " + s[0] + " level " + L + " " + LEVELS[L - 1] }, String(L));
+        b.addEventListener("click", function () { vals[i] = L; update(); });
+        lv.appendChild(b); bs.push(b);
+      })(L);
+    }
+    btnGroups.push(bs);
+    row.appendChild(lv); list.appendChild(row);
+  });
+  var bars = document.getElementById("bars"), barl = document.getElementById("barlabels");
+  STD.forEach(function (s) { bars.appendChild(el("div", { "class": "bar" })); barl.appendChild(el("span", null, s[0])); });
+  function update() {
+    var total = vals.reduce(function (a, b) { return a + b; }, 0);
+    var b = band(total), min = Math.min.apply(null, vals);
+    var low = vals.map(function (v, i) { return v <= 2 ? STD[i][0] : null; }).filter(Boolean);
+    var ones = vals.map(function (v, i) { return v === 1 ? STD[i][0] : null; }).filter(Boolean);
+    btnGroups.forEach(function (bs, i) { bs.forEach(function (bt, j) { bt.setAttribute("aria-pressed", String(j + 1 === vals[i])); bt.classList.toggle("low", j + 1 <= 2); }); });
+    document.getElementById("r-total").innerHTML = total + " <small>/ 60</small> · " + LEVELS[b];
+    document.getElementById("r-band-note").textContent = "Band " + (b + 1) + " of 5. Thresholds: 12 · 13–24 · 25–36 · 37–48 · 49–60.";
+    Array.prototype.forEach.call(bars.children, function (bar, i) { bar.style.height = (vals[i] / 5 * 100) + "%"; bar.classList.toggle("low", vals[i] <= 2); });
+    document.getElementById("r-profile").innerHTML = ones.length
+      ? "<strong>" + ones.length + " standard" + (ones.length > 1 ? "s" : "") + " at Level 1</strong> (" + ones.join(", ") + "); " + low.length + " at Level 2 or below."
+      : low.length + " standard" + (low.length === 1 ? "" : "s") + " at Level 2 or below" + (low.length ? " (" + low.join(", ") + ")." : ".");
+    document.getElementById("r-floor").innerHTML = LEVELS[min - 1] + " <small>(lowest standard at Level " + min + ")</small>";
+  }
+  document.getElementById("b-fig3").addEventListener("click", function () { vals = FIG3.slice(); update(); });
+  document.getElementById("b-even").addEventListener("click", function () { vals = EVEN.slice(); update(); });
+  document.getElementById("b-spiky").addEventListener("click", function () { vals = SPIKY.slice(); update(); });
+  update();
+  window.__immatBand = band;
+
+  /* ---------- Coverage map ---------- */
+  var COV = [
+    ["(a) Data documentation", [["Metadata and data dictionary", "both"], ["Formats and standards", "both"], ["Data source / provenance", "both"], ["Data model", "art"]]],
+    ["(b) Technical quality", [["Completeness", "both"], ["Uniqueness", "art"], ["Accuracy", "both"], ["Validity", "both"], ["Timeliness", "art"], ["Consistency", "both"], ["Coherence", "q"], ["Precision", "q"]]],
+    ["(c) Data quality management processes", [["Maturity of DQ processes", "art"], ["Review and audit", "art"], ["Examination of bias", "art"]]],
+    ["(d) Coverage", [["Period", "art"], ["Population coverage", "both"], ["Representativity", "both"], ["Average time a person appears", "art"]]],
+    ["(e) Access and provision", [["Collection-to-addition lag", "art"], ["Time to provide after approval", "both"]]],
+    ["(f) Data modifications", [["Merging, adding and linkage", "art"]]]
+  ];
+  var cov = document.getElementById("cov");
+  COV.forEach(function (g) {
+    var p = el("div", { "class": "panel" });
+    var nArt = g[1].filter(function (c) { return c[1] === "art"; }).length;
+    p.appendChild(el("h3", null, g[0]));
+    p.appendChild(el("div", { "class": "small muted" }, nArt ? nArt + " of " + g[1].filter(function (c) { return c[1] !== "q"; }).length + " Article elements without a QUANTUM dimension" : "All Article elements have a QUANTUM dimension"));
+    var ch = el("div", { "class": "chips" });
+    g[1].forEach(function (c) { ch.appendChild(el("span", { "class": "chip " + c[1] }, c[0])); });
+    p.appendChild(ch); cov.appendChild(p);
+  });
+  var go = document.getElementById("gaps-only");
+  go.addEventListener("change", function () { document.body.classList.toggle("gaps-only", go.checked); });
+
+  /* ---------- Process vs evidence ---------- */
+  var PE = [
+    ["Accessibility", "Access and provision", "Provide data in practice; track requests manually", "A formal method; comparable start and end points for timing; credit for open-data provision", "4.5.1"],
+    ["Population coverage", "Coverage", "Understand their eligible populations", "Routinely documented coverage rates; private-sector activity is outside their sight", "4.6.1"],
+    ["Representativity", "Coverage", "Recognise the concept, especially for sample-based data", "A method suited to service-use and clinical-need datasets", "4.6.2"],
+    ["Compliance", "Data documentation", "Follow standards, from GDPR to coding conventions", "A shared scope for what the dimension covers", "4.7.1"],
+    ["Data provenance", "Data documentation", "Hold documentation, process descriptions and audit trails", "Complete traceability where data passes through other organisations", "4.7.2"],
+    ["Metadata scope", "Data documentation", "Maintain data dictionaries to varying degrees", "HealthDCAT-AP metadata; alignment with a national dictionary", "4.7.3"],
+    ["Accuracy", "Technical quality", "Use entry controls, duplicate and outlier checks, ad hoc review", "Routine measurement; feasible checks where sources are paper records", "4.8.1"],
+    ["Coherence", "Technical quality", "Use standard coding systems; some track coding changes", "Clear expectations for documenting processes and outcomes", "4.8.2"],
+    ["Completeness", "Technical quality", "Mandatory fields prevent incomplete records", "Standard targets; a rule on all variables versus a minimum set", "4.8.3"],
+    ["Consistency", "Technical quality", "Change control for new variables; embedded day-to-day checks", "A formal process; handling of legacy inconsistencies", "4.8.4"],
+    ["Precision", "Technical quality", "Drop-downs, code sets and structured fields", "A way to calculate or document precision rates", "4.8.5"],
+    ["Validity", "Technical quality", "Some adherence to standards", "A standardised data model and a conformance report against it", "4.8.6"]
+  ];
+  var tb = document.getElementById("pe-body");
+  PE.forEach(function (r) {
+    var tr = el("tr", { "class": "pe-row" });
+    tr.appendChild(el("td", null, r[0]));
+    tr.appendChild(el("td", { "class": "cat" }, r[1]));
+    tr.appendChild(el("td", null, r[2]));
+    tr.appendChild(el("td", null, r[3]));
+    tr.appendChild(el("td", { "class": "num" }, r[4]));
+    tb.appendChild(tr);
+  });
+})();
+</script>
+</body>
+</html>

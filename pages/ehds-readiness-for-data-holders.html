@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en-IE">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EHDS Readiness for Data Holders</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Civic, practical guide: one reading column, tools set as framed panels. */
+  --bg: #f4f6f5;
+  --surface: #ffffff;
+  --ink: #16232a;
+  --muted: #52616a;
+  --line: #d6dddb;
+  --accent: #0e6a5e;
+  --accent-soft: #e2f0ed;
+  --ok: #1d7646; --ok-soft: #e3f3ea;
+  --warn: #8f5a00; --warn-soft: #fbf0db;
+  --bad: #a2382a; --bad-soft: #fbe6e2;
+  --display: "Newsreader", Georgia, "Times New Roman", serif;
+  --body: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f171a; --surface: #162126; --ink: #e3ebe8; --muted: #9db0b3; --line: #2a3b41;
+    --accent: #5cc4ae; --accent-soft: #173a35;
+    --ok: #6bcf96; --ok-soft: #173426; --warn: #e6ae52; --warn-soft: #3a2c12; --bad: #ef8a78; --bad-soft: #3d1f1a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f171a; --surface: #162126; --ink: #e3ebe8; --muted: #9db0b3; --line: #2a3b41;
+  --accent: #5cc4ae; --accent-soft: #173a35;
+  --ok: #6bcf96; --ok-soft: #173426; --warn: #e6ae52; --warn-soft: #3a2c12; --bad: #ef8a78; --bad-soft: #3d1f1a;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.6; }
+a { color: var(--accent); }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, [tabindex]:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.wrap { max-width: 980px; margin: 0 auto; padding: 0 20px; }
+.read { max-width: 68ch; }
+header.top { border-bottom: 1px solid var(--line); background: var(--surface); }
+header.top .wrap { padding-top: 36px; padding-bottom: 28px; }
+.kicker { font-size: 0.82rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); margin: 0 0 8px; }
+h1, h2, h3 { font-family: var(--display); font-weight: 600; text-wrap: balance; line-height: 1.2; }
+h1 { font-size: clamp(2rem, 4.2vw, 2.7rem); margin: 0 0 12px; }
+h2 { font-size: 1.75rem; margin: 0 0 10px; }
+h3 { font-size: 1.25rem; margin: 0 0 6px; }
+.lede { font-size: 1.12rem; color: var(--muted); margin: 0; }
+.notice { margin-top: 18px; font-size: 0.88rem; color: var(--muted); border-left: 3px solid var(--line); padding-left: 12px; }
+nav.toc { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 20px; font-size: 0.92rem; }
+nav.toc a { text-decoration: none; border-bottom: 1px solid currentColor; }
+section.block { padding: 44px 0; border-bottom: 1px solid var(--line); }
+section.block > .wrap > p { max-width: 68ch; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 20px; }
+.muted { color: var(--muted); }
+.small { font-size: 0.88rem; }
+.cite { font-size: 0.8rem; color: var(--muted); }
+
+/* Timeline */
+.timeline { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 0; margin: 22px 0 14px; position: relative; }
+.timeline::before { content: ""; position: absolute; left: 0; right: 0; top: 17px; height: 2px; background: var(--line); }
+.tl-item { position: relative; background: none; border: 0; padding: 0 4px; text-align: left; font: inherit; color: inherit; cursor: pointer; }
+.tl-dot { display: block; width: 14px; height: 14px; border-radius: 50%; background: var(--surface); border: 2px solid var(--muted); margin: 11px 0 10px; position: relative; }
+.tl-item.past .tl-dot { background: var(--muted); }
+.tl-item.now .tl-dot { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+.tl-item[aria-pressed="true"] .tl-dot { border-color: var(--accent); background: var(--accent); }
+.tl-date { display: block; font-weight: 700; font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+.tl-label { display: block; font-size: 0.82rem; color: var(--muted); line-height: 1.35; }
+.tl-item[aria-pressed="true"] .tl-label { color: var(--ink); }
+#tl-detail h3 { margin-bottom: 4px; }
+@media (max-width: 720px) {
+  .timeline { grid-template-columns: 1fr; gap: 4px; }
+  .timeline::before { left: 6px; right: auto; top: 0; bottom: 0; width: 2px; height: auto; }
+  .tl-item { display: grid; grid-template-columns: 26px 1fr; align-items: start; }
+  .tl-dot { margin: 6px 0 0; grid-row: span 2; }
+}
+
+/* Two tools */
+.tabs { display: flex; gap: 6px; border-bottom: 1px solid var(--line); margin: 20px 0 0; flex-wrap: wrap; }
+.tab { font: inherit; font-weight: 600; background: none; border: 1px solid transparent; border-bottom: 0; padding: 10px 16px; border-radius: 6px 6px 0 0; color: var(--muted); cursor: pointer; }
+.tab[aria-selected="true"] { background: var(--surface); border-color: var(--line); color: var(--ink); margin-bottom: -1px; }
+.tabpanel { background: var(--surface); border: 1px solid var(--line); border-top: 0; border-radius: 0 0 6px 6px; padding: 22px; }
+.facts { display: grid; grid-template-columns: 180px 1fr; gap: 10px 18px; margin: 14px 0 0; }
+.facts dt { font-weight: 600; color: var(--muted); font-size: 0.92rem; }
+.facts dd { margin: 0; }
+@media (max-width: 560px) { .facts { grid-template-columns: 1fr; gap: 2px; } .facts dd { margin-bottom: 10px; } }
+
+/* Findings */
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 18px; }
+@media (max-width: 720px) { .cols { grid-template-columns: 1fr; } }
+.cols ul { padding-left: 1.1em; margin: 8px 0 0; }
+.cols li { margin-bottom: 8px; }
+.big { font-family: var(--display); font-size: 1.15rem; margin: 6px 0 0; }
+
+/* Self-check */
+.check-grid { display: grid; gap: 12px; margin-top: 18px; }
+.grp { background: var(--surface); border: 1px solid var(--line); border-left: 5px solid var(--line); border-radius: 6px; padding: 16px 18px; display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 14px 22px; }
+.grp.s-ready { border-left-color: var(--ok); }
+.grp.s-gap { border-left-color: var(--warn); }
+.grp.s-not { border-left-color: var(--bad); }
+@media (max-width: 720px) { .grp { grid-template-columns: 1fr; } }
+.grp h3 { font-size: 1.1rem; }
+.grp p { margin: 0; }
+.q { margin-top: 6px; }
+.q label { display: block; font-size: 0.86rem; font-weight: 600; color: var(--muted); margin-bottom: 2px; }
+select { font: inherit; font-size: 0.95rem; width: 100%; padding: 6px 8px; border: 1px solid var(--muted); border-radius: 4px; background: var(--surface); color: var(--ink); }
+.pill { display: inline-block; font-size: 0.78rem; font-weight: 700; padding: 2px 10px; border-radius: 999px; margin-bottom: 6px; }
+.pill.s-ready { background: var(--ok-soft); color: var(--ok); }
+.pill.s-gap { background: var(--warn-soft); color: var(--warn); }
+.pill.s-not { background: var(--bad-soft); color: var(--bad); }
+.pill.s-inc { background: var(--bg); color: var(--muted); border: 1px solid var(--line); }
+.next { font-size: 0.93rem; }
+.summary-bar { display: flex; flex-wrap: wrap; gap: 10px 22px; align-items: center; margin-top: 16px; font-size: 0.95rem; }
+.summary-bar b { font-variant-numeric: tabular-nums; }
+
+/* Checklist */
+.todo { list-style: none; padding: 0; margin: 18px 0 0; display: grid; gap: 8px; }
+.todo li { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; display: grid; grid-template-columns: 26px 1fr; gap: 10px; align-items: start; }
+.todo input { width: 18px; height: 18px; margin-top: 4px; accent-color: var(--accent); }
+.todo label { cursor: pointer; }
+.todo label b { display: block; }
+.todo li.done label b { text-decoration: line-through; color: var(--muted); }
+.progress { font-size: 0.92rem; color: var(--muted); margin-top: 10px; font-variant-numeric: tabular-nums; }
+
+.open { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-top: 18px; }
+.open .panel h3 { font-size: 1.05rem; font-family: var(--body); font-weight: 700; }
+.open .panel p { margin: 0; font-size: 0.95rem; }
+footer { padding: 34px 0 50px; font-size: 0.88rem; color: var(--muted); }
+footer ol { padding-left: 1.2em; }
+button.reset { font: inherit; font-size: 0.88rem; background: none; border: 1px solid var(--line); color: var(--muted); padding: 6px 12px; border-radius: 4px; cursor: pointer; }
+@media (prefers-reduced-motion: no-preference) { .grp, .pill { transition: border-color 0.2s ease, background-color 0.2s ease; } }
+</style>
+
+<style id="ehds-microsite-nav-css">
+#ehds-microsite-nav{box-sizing:border-box;display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 20px;align-items:center;padding:10px max(20px,calc((100% - 1140px)/2));background:#102d32;color:#f1f7f5;font:600 13px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;border-bottom:3px solid #1ba68a}
+#ehds-microsite-nav a{color:#fff!important;text-decoration:none!important;border-bottom:1px solid #72dbc4!important}
+#ehds-microsite-nav a:hover,#ehds-microsite-nav a:focus-visible{color:#aaf2e1!important}
+#ehds-microsite-nav span{font-weight:400;opacity:.86}
+@media print{#ehds-microsite-nav{display:none!important}}
+</style>
+</head>
+<body>
+<nav id="ehds-microsite-nav" aria-label="Microsite navigation"><a href="../index.html">&#8592; EHDS Data Quality Readiness</a><span>Independent companion resource &nbsp;&middot;&nbsp; <a href="../index.html#source-reports">Original HIQA reports</a></span></nav>
+
+
+<header class="top">
+  <div class="wrap">
+    <p class="kicker">Guide for health data holders in Ireland</p>
+    <h1>Getting ready for the EHDS: what HIQA's two pilots mean for you</h1>
+    <p class="lede read">On 9 November 2026 HIQA published reports on two tools it is building to help data holders prepare for secondary use of health data under the European Health Data Space. This guide explains what each tool is, what the pilots found, and what you can start on now.</p>
+    <p class="notice read">Independent explainer by Agile Health Informatics Ltd. It is not a HIQA publication and has no official standing. It paraphrases the published reports; check the originals before acting.</p>
+    <nav class="toc" aria-label="On this page">
+      <a href="#when">What happens when</a>
+      <a href="#tools">The two tools</a>
+      <a href="#found">What the pilots found</a>
+      <a href="#selfcheck">Quick self-check</a>
+      <a href="#now">What to do now</a>
+      <a href="#undecided">Still being decided</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<section class="block" id="when">
+  <div class="wrap">
+    <h2>What happens when</h2>
+    <p>Select a date to see what it means for you. Dates come from the EHDS Regulation and the two reports; HIQA's own dates may move.</p>
+    <p class="notice"><strong>Different regulatory tracks:</strong> minimum dataset catalogue metadata is specified by <a href="https://eur-lex.europa.eu/eli/reg_impl/2026/2098/oj">Implementing Regulation (EU) 2026/2098</a>; the detailed rules for the Data Quality and Utility Label are still due under EHDS Article 78(6). A metadata description is not itself a quality label.</p>
+    <div class="timeline" role="group" aria-label="Timeline" id="timeline"></div>
+    <div class="panel" id="tl-detail" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="block" id="tools">
+  <div class="wrap">
+    <h2>Two tools, two different jobs</h2>
+    <p>The IMMAT is something <strong>you</strong> fill in about your organisation. The CAF-DQ is what <strong>HIQA's reviewers</strong> will use when they check your data quality. Both sit inside HealthData@IE, the national EHDS project led by the Department of Health.</p>
+    <div class="tabs" role="tablist" aria-label="The two tools">
+      <button class="tab" role="tab" id="tab-immat" aria-controls="panel-immat" aria-selected="true">IMMAT: self-assessment</button>
+      <button class="tab" role="tab" id="tab-caf" aria-controls="panel-caf" aria-selected="false" tabindex="-1">CAF-DQ: HIQA's review framework</button>
+    </div>
+    <div class="tabpanel" role="tabpanel" id="panel-immat" aria-labelledby="tab-immat">
+      <h3>Information Management Maturity Assessment Tool</h3>
+      <dl class="facts">
+        <dt>Who fills it in</dt><dd>You, the data holder. The pilot found it usually takes a team, typically people with data governance or data quality roles.</dd>
+        <dt>What it asks</dt><dd>Twelve questions, one for each of HIQA's 2024 National Standards for Information Management. For each, you pick the one of five statements that best describes your practice, from <em>Initial</em> to <em>Optimised</em>.</dd>
+        <dt>What you get</dt><dd>A score for each standard and an overall score between 12 and 60, banded into five maturity levels. HIQA plans to let you compare yourself anonymously with similar organisations.</dd>
+        <dt>When</dt><dd>A digital version is being built on the same platform and login as the National Health Dataset Catalogue. Roll-out to high-priority data holders is planned for 2027.</dd>
+        <dt>How results will be used</dt><dd>To help you prioritise, and, according to the report, to help HIQA plan its compliance reviews and targeted reviews of data quality.</dd>
+      </dl>
+      <p class="cite">Source: IMMAT pilot report (Deliverable 8.2), sections 1.3, 4.3.2, 5.2 and Appendix C.</p>
+    </div>
+    <div class="tabpanel" role="tabpanel" id="panel-caf" aria-labelledby="tab-caf" hidden>
+      <h3>Compliance Assessment Framework for Data Quality</h3>
+      <dl class="facts">
+        <dt>Who uses it</dt><dd>HIQA reviewers, when carrying out targeted reviews of data quality at data holders.</dd>
+        <dt>What it covers</dt><dd>Twelve data quality dimensions developed for the EU's data quality and utility label by the QUANTUM project, in four groups: access and provision, coverage, data documentation, and technical quality.</dd>
+        <dt>How it judges</dt><dd>Against HIQA's four compliance levels: Compliant, Substantially compliant, Partially compliant, Non-compliant.</dd>
+        <dt>When</dt><dd>The draft is being revised. HIQA expects to publish a final version and supporting guidance in 2027, and will set out its review method before targeted reviews begin.</dd>
+        <dt>Why it matters</dt><dd>Many data holders will have to publish a data quality and utility label for their datasets. HIQA's reviews are intended to check that labels are reliable and to drive improvement.</dd>
+      </dl>
+      <p class="cite">Source: CAF-DQ pilot report (Deliverable 8.9), sections 1.3, 1.4 and 6.</p>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="found">
+  <div class="wrap">
+    <h2>What the pilots found</h2>
+    <p>Both pilots were small: four data holders for the IMMAT and three for the CAF-DQ, chosen to cover different types and levels of maturity. Their findings are indications rather than national measurements.</p>
+    <div class="cols">
+      <div class="panel">
+        <h3>IMMAT pilot</h3>
+        <p class="big">Participants found the tool useful, and asked for clearer guidance.</p>
+        <ul>
+          <li>It helped them see where to improve and could brief senior management.</li>
+          <li>Organisations with several datasets found that a single organisation-wide score hid weak datasets behind strong ones. They want to assess per dataset as well.</li>
+          <li>They wanted worked examples for each maturity level, because choosing between levels involved judgement.</li>
+          <li>Time and staff capacity were the main barriers.</li>
+          <li>They wanted any benchmarking to be anonymous, and HIQA to be clear about how results will be used.</li>
+        </ul>
+        <p class="cite">IMMAT report, sections 4.1 to 4.4.</p>
+      </div>
+      <div class="panel">
+        <h3>CAF-DQ pilot</h3>
+        <p class="big">No participant was yet able to report against all twelve dimensions, whatever its maturity.</p>
+        <ul>
+          <li>Holders were doing many of the right things, such as mandatory fields and controlled code lists, but could show the <em>process</em> rather than the <em>outcome</em> for their data.</li>
+          <li>Several dimensions were read in different ways, especially compliance, precision and representativity.</li>
+          <li>Holders often depend on the data they receive from others, which limits what they can document or improve.</li>
+          <li>Only one of the three had a formal data quality framework. None used HealthDCAT-AP, the EU metadata standard for health datasets.</li>
+        </ul>
+        <p class="cite">CAF-DQ report, sections 4.3, 4.4, 4.7.3 and 4.9.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="selfcheck">
+  <div class="wrap">
+    <h2>Quick self-check for one dataset</h2>
+    <p>The data quality and utility label has to cover six groups of elements, set out in Article 78(3) of the EHDS Regulation. For one dataset, answer two questions per group: do you have a written process, and could you show results for your latest release? Your answers stay in this browser.</p>
+    <div class="check-grid" id="check"></div>
+    <div class="summary-bar" id="check-summary" aria-live="polite"></div>
+    <p class="small muted">This is a rough guide, not an assessment. It does not show compliance with anything. The six groups follow the Regulation; the detailed criteria will be set by the European Commission, due by 26 March 2027.</p>
+    <p><button class="reset" type="button" id="check-reset">Clear answers</button></p>
+  </div>
+</section>
+
+<section class="block" id="now">
+  <div class="wrap">
+    <h2>What you can start on now</h2>
+    <p>None of these depends on the final tools. Tick them off as you go; ticks are kept in this browser only.</p>
+    <ul class="todo" id="todo"></ul>
+    <p class="progress" id="todo-progress"></p>
+  </div>
+</section>
+
+<section class="block" id="undecided">
+  <div class="wrap">
+    <h2>Still being decided</h2>
+    <p>Neither report settles these points. Watch for HIQA guidance on them.</p>
+    <div class="open">
+      <div class="panel"><h3>Organisation or dataset?</h3><p>Whether the IMMAT is completed once for your organisation, for each dataset, or both. The pilot found both are needed.</p></div>
+      <div class="panel"><h3>How IMMAT results are used</h3><p>Participants asked HIQA to be clear. The report says results will help HIQA plan reviews.</p></div>
+      <div class="panel"><h3>What counts as evidence</h3><p>What you will need to show for each data quality dimension, and in how much detail.</p></div>
+      <div class="panel"><h3>All variables or a minimum set</h3><p>Whether completeness and consistency are reported for every variable or a defined subset.</p></div>
+      <div class="panel"><h3>Measuring time to provide data</h3><p>Whether the clock starts when a request is submitted or when it is complete.</p></div>
+      <div class="panel"><h3>The final label specification</h3><p>The Commission's technical specifications, due by 26 March 2027, will fix what the label contains.</p></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap read">
+    <p><strong>Sources</strong></p>
+    <ol>
+      <li>HIQA. Pilot Report: Information Management Maturity Assessment Tool. HealthData@IE Deliverable 8.2. Published 9 November 2026.</li>
+      <li>HIQA. Pilot Report: Compliance Assessment Framework for Data Quality. HealthData@IE Deliverable 8.9. Published 9 November 2026.</li>
+      <li><a href="https://www.hiqa.ie/hiqa-news-updates/hiqa-publishes-reports-tools-developed-support-health-data-holders-ireland">HIQA news release, 9 November 2026</a>.</li>
+      <li><a href="https://eur-lex.europa.eu/eli/reg/2025/327/oj">Regulation (EU) 2025/327 on the European Health Data Space</a>, Articles 51, 77 and 78. See also <a href="https://eur-lex.europa.eu/eli/reg_impl/2026/2098/oj">Commission Implementing Regulation (EU) 2026/2098</a> for adopted HealthDCAT-AP-based metadata requirements, Articles 51 and 78.</li>
+    </ol>
+    <p>© 2026 Agile Health Informatics Ltd. Independent explainer; not affiliated with or endorsed by HIQA, the Department of Health or HealthData@IE.</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+  function store(key, val) { try { if (val === undefined) return JSON.parse(localStorage.getItem(key) || "null"); localStorage.setItem(key, JSON.stringify(val)); } catch (e) { return null; } }
+  function el(tag, attrs, html) { var n = document.createElement(tag); if (attrs) for (var k in attrs) n.setAttribute(k, attrs[k]); if (html != null) n.innerHTML = html; return n; }
+
+  /* ---------- Timeline ---------- */
+  var TL = [
+    { d: "Mar 2025", label: "EHDS in force", status: "past", title: "The EHDS Regulation enters into force (26 March 2025)",
+      body: "Regulation (EU) 2025/327 applies in stages. Most obligations on data holders for secondary use start in 2029." },
+    { d: "Sep 2026", label: "Metadata rules adopted", status: "past", title: "Dataset description metadata requirements adopted (18 September 2026)",
+      body: "Commission Implementing Regulation (EU) 2026/2098, published on 21 September, sets minimum HealthDCAT-AP metadata for health dataset descriptions under EHDS Article 77(4). It applies from 26 March 2029. This is separate from the still-forthcoming Data Quality and Utility Label technical specifications." },
+    { d: "Nov 2026", label: "Pilot reports published", status: "now", title: "HIQA publishes the IMMAT and CAF-DQ pilot reports (9 November 2026)",
+      body: "Both tools are still developing. The reports describe participation by four data holders in the IMMAT pilot and three in the CAF-DQ pilot; they do not establish that seven distinct organisations took part." },
+    { d: "Mar 2027", label: "EU label specification due", status: "future", title: "Commission sets the label's technical specifications (by 26 March 2027)",
+      body: "Under Article 78(6), implementing acts will fix what the data quality and utility label contains and how it looks. This is when detailed label requirements are expected to become clear; dataset catalogue metadata rules have already been adopted." },
+    { d: "2027", label: "Digital IMMAT roll-out", status: "future", title: "Digital IMMAT goes to high-priority data holders",
+      body: "If your organisation is a high-priority data holder, expect to be asked to complete the IMMAT online, using the same login as the National Health Dataset Catalogue." },
+    { d: "2027", label: "Final CAF-DQ and guidance", status: "future", title: "Final CAF-DQ and data quality guidance",
+      body: "HIQA expects to publish the final framework (the report gives October 2027), along with national guidance on enhancing data quality, before targeted reviews start." },
+    { d: "Mar 2029", label: "Most data categories", status: "future", title: "Most categories of data must be available for secondary use (26 March 2029)",
+      body: "Data holders in the Article 51 categories must make data available through the health data access body, with dataset descriptions in the national catalogue and, where required, a quality label." },
+    { d: "Mar 2031", label: "Remaining categories", status: "future", title: "Remaining categories (26 March 2031)",
+      body: "Further categories, including genetic and other -omic data, clinical trial data and some research cohort data, follow two years later." }
+  ];
+  var tlHost = document.getElementById("timeline"), tlDetail = document.getElementById("tl-detail");
+  function showTL(i) {
+    tlHost.querySelectorAll(".tl-item").forEach(function (b, j) { b.setAttribute("aria-pressed", String(i === j)); });
+    tlDetail.innerHTML = "";
+    tlDetail.appendChild(el("h3", null, TL[i].title));
+    tlDetail.appendChild(el("p", { style: "margin:0" }, TL[i].body));
+  }
+  TL.forEach(function (t, i) {
+    var b = el("button", { type: "button", "class": "tl-item " + t.status, "aria-pressed": "false" });
+    b.innerHTML = '<span class="tl-dot" aria-hidden="true"></span><span class="tl-date">' + t.d + '</span><span class="tl-label">' + t.label + "</span>";
+    b.addEventListener("click", function () { showTL(i); });
+    tlHost.appendChild(b);
+  });
+  showTL(2);
+
+  /* ---------- Tabs ---------- */
+  var tabs = [document.getElementById("tab-immat"), document.getElementById("tab-caf")];
+  function selectTab(t) {
+    tabs.forEach(function (x) {
+      var on = x === t;
+      x.setAttribute("aria-selected", String(on));
+      x.tabIndex = on ? 0 : -1;
+      document.getElementById(x.getAttribute("aria-controls")).hidden = !on;
+    });
+  }
+  tabs.forEach(function (t, i) {
+    t.addEventListener("click", function () { selectTab(t); });
+    t.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowRight" || e.key === "ArrowLeft") { var n = tabs[(i + 1) % 2]; selectTab(n); n.focus(); e.preventDefault(); }
+    });
+  });
+
+  /* ---------- Self-check ---------- */
+  var GROUPS = [
+    { id: "a", name: "Describing your data", ref: "Art. 78(3)(a)",
+      what: "Metadata, a data dictionary, the formats, standards and code versions you use, where the data comes from, and your data model.",
+      fixP: "Name an owner for the dataset description and data dictionary, and write down how they are kept up to date.",
+      fixE: "Check that your dictionary covers every variable in the latest release, and record the code-system editions used." },
+    { id: "b", name: "Technical quality", ref: "Art. 78(3)(b)",
+      what: "Completeness, duplicates, accuracy, conformance to a data model, timeliness and consistency.",
+      fixP: "Write down the checks you already run at data entry and load, with who owns them.",
+      fixE: "Measure missingness per key variable and the duplicate count for your latest release, and keep the query." },
+    { id: "c", name: "Managing data quality", ref: "Art. 78(3)(c)",
+      what: "Who is responsible for data quality, how it is reviewed or audited, and whether you look for bias in how data is collected.",
+      fixP: "Name a data quality lead and agree a simple data quality framework, even a short one.",
+      fixE: "Produce a short data quality report for the latest release and take it to a governance meeting." },
+    { id: "d", name: "Coverage", ref: "Art. 78(3)(d)",
+      what: "The period covered, how much of the eligible population is included, how representative it is, and how long people stay in the data.",
+      fixP: "Define the eligible population and where your denominator comes from.",
+      fixE: "Calculate a coverage rate for the latest release and note known gaps, such as private-sector activity." },
+    { id: "e", name: "Access and provision", ref: "Art. 78(3)(e)",
+      what: "The delay between data being collected and added to your dataset, and how long you take to provide data once a request is approved.",
+      fixP: "Log when data arrives and when requests are approved and fulfilled.",
+      fixE: "Work out median processing lag and average time to provide data over the last year." },
+    { id: "f", name: "Changes and linkage", ref: "Art. 78(3)(f)",
+      what: "Data merged into or linked with your dataset from other sources.",
+      fixP: "Write down which datasets you link to and how records are matched.",
+      fixE: "Record the match rate for linkage in the latest release." }
+  ];
+  var PQ = [["", "Choose…"], ["0", "Nothing in place"], ["1", "Done, but not written down"], ["2", "Written process with a named owner"]];
+  var EQ = [["", "Choose…"], ["0", "No"], ["1", "We could describe it, but have not measured it"], ["2", "Yes, measured for the latest release"]];
+  var SKEY = "ehds-dh-selfcheck";
+  var ans = store(SKEY) || {};
+  var host = document.getElementById("check");
+  var cards = {};
+  function stateOf(a) {
+    if (!a || a.p === undefined || a.p === "" || a.e === undefined || a.e === "") return "inc";
+    if (+a.p < 2) return "not";
+    return +a.e >= 2 ? "ready" : "gap";
+  }
+  var LABEL = { ready: "On track", gap: "Evidence gap", not: "Start with the process", inc: "Not answered" };
+  function mkSelect(id, opts, val, onch) {
+    var s = el("select", { id: id });
+    opts.forEach(function (o) { var op = el("option", { value: o[0] }); op.textContent = o[1]; s.appendChild(op); });
+    s.value = val == null ? "" : val;
+    s.addEventListener("change", function () { onch(s.value); });
+    return s;
+  }
+  GROUPS.forEach(function (g) {
+    var a = ans[g.id] || (ans[g.id] = {});
+    var card = el("div", { "class": "grp" });
+    var left = el("div");
+    left.appendChild(el("h3", null, g.name + ' <span class="cite">' + g.ref + "</span>"));
+    left.appendChild(el("p", { "class": "small muted" }, g.what));
+    var qp = el("div", { "class": "q" }); qp.appendChild(el("label", { "for": "p-" + g.id }, "Do you have a written process?"));
+    qp.appendChild(mkSelect("p-" + g.id, PQ, a.p, function (v) { a.p = v; store(SKEY, ans); render(); }));
+    var qe = el("div", { "class": "q" }); qe.appendChild(el("label", { "for": "e-" + g.id }, "Could you show results for your latest release?"));
+    qe.appendChild(mkSelect("e-" + g.id, EQ, a.e, function (v) { a.e = v; store(SKEY, ans); render(); }));
+    left.appendChild(qp); left.appendChild(qe);
+    var right = el("div", { "aria-live": "polite" });
+    card.appendChild(left); card.appendChild(right);
+    host.appendChild(card);
+    cards[g.id] = { card: card, right: right, g: g };
+  });
+  function render() {
+    var n = { ready: 0, gap: 0, not: 0, inc: 0 };
+    GROUPS.forEach(function (g) {
+      var st = stateOf(ans[g.id]); n[st]++;
+      var c = cards[g.id];
+      c.card.className = "grp s-" + st;
+      var next = st === "not" ? g.fixP : st === "gap" ? g.fixE : st === "ready" ? "Keep the evidence with the release so it can be checked later." : "Answer both questions to see a suggested next step.";
+      c.right.innerHTML = '<span class="pill s-' + st + '">' + LABEL[st] + '</span><p class="next"><strong>Next step:</strong> ' + next + "</p>";
+    });
+    document.getElementById("check-summary").innerHTML =
+      '<span><b>' + n.ready + '</b> on track</span><span><b>' + n.gap + '</b> evidence gaps</span><span><b>' + n.not + '</b> need a process first</span>' +
+      (n.inc ? '<span class="muted"><b>' + n.inc + '</b> not answered</span>' : "");
+  }
+  document.getElementById("check-reset").addEventListener("click", function () {
+    ans = {}; GROUPS.forEach(function (g) { ans[g.id] = {}; document.getElementById("p-" + g.id).value = ""; document.getElementById("e-" + g.id).value = ""; });
+    store(SKEY, ans); render();
+  });
+  render();
+
+  /* ---------- Checklist ---------- */
+  var TODO = [
+    ["Work out which of your datasets are in scope", "Check them against the Article 51 categories of data for secondary use, and note whether each must be available by 2029 or 2031."],
+    ["Check which datasets will need a label", "Under Article 78(2), datasets collected and processed with Union or national public funding must carry a data quality and utility label."],
+    ["Name a data quality lead", "Two of the three CAF-DQ pilot participants had a designated data quality role. Responsibility is the first thing reviewers will look for."],
+    ["Read the National Standards for Information Management", "The IMMAT is built on them, and the pilot found people completed it faster when they knew the standards."],
+    ["Get your data dictionary in order", "Make sure it covers every variable in your current release, with code-system editions."],
+    ["Look at HealthDCAT-AP", "It is the EU metadata standard your dataset descriptions will need to follow. None of the pilot participants used it yet."],
+    ["Measure one thing for your latest release", "For example, missingness per key variable. Keep the query so the result can be repeated."],
+    ["Map where your data comes from", "List the organisations upstream of you and what you depend on them for."],
+    ["Start logging data requests", "Record when each request arrives, is complete, is approved and is fulfilled."],
+    ["Decide who would complete the IMMAT", "The pilot found it is a team task, sometimes involving external contractors."]
+  ];
+  var TKEY = "ehds-dh-todo";
+  var done = store(TKEY) || {};
+  var ul = document.getElementById("todo");
+  TODO.forEach(function (t, i) {
+    var id = "todo-" + i;
+    var li = el("li");
+    var cb = el("input", { type: "checkbox", id: id });
+    cb.checked = !!done[i];
+    var lb = el("label", { "for": id }, "<b>" + t[0] + "</b><span class=\"small muted\">" + t[1] + "</span>");
+    cb.addEventListener("change", function () { done[i] = cb.checked; store(TKEY, done); paint(); });
+    li.appendChild(cb); li.appendChild(lb); ul.appendChild(li);
+  });
+  function paint() {
+    var c = 0;
+    ul.querySelectorAll("li").forEach(function (li, i) { li.classList.toggle("done", !!done[i]); if (done[i]) c++; });
+    document.getElementById("todo-progress").textContent = c + " of " + TODO.length + " done";
+  }
+  paint();
+})();
+</script>
+</body>
+</html>
